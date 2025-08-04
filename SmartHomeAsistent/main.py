@@ -40,6 +40,7 @@ def obradiNaredbu(naredba):
     if naredba == 4:  # zatvori vrata
         arduinoSerial.write(bytes('4', 'utf-8'))
 
+
 def klasicifirajNaredbu(text):
     result = classifier(text, candidate_labels=NAREDBE)
 
