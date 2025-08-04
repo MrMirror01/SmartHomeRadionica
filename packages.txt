@@ -1,1 +1,1 @@
-pip install speechrecognition transformers tensorflow pyserial gTTS pygame
+pip install speechrecognition pyaudio transformers tiktoken sentencepiece torch tf-keras tensorflow pyserial gTTS pygame

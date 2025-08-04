@@ -34,7 +34,7 @@ def obradiNaredbu(naredba):
         arduinoSerial.write(bytes('2', 'utf-8'))
         time.sleep(0.1)
         temp = arduinoSerial.readline()
-        izgovori("U prostoriji je " + temp.decode('utf-8').replace('.', ',') + " stupnjeva Celzijusa.")
+        izgovori("U prostoriji je " + temp.decode('utf-8') + " stupnjeva Celzijusa.")
     if naredba == 3:  # otvori vrata
         arduinoSerial.write(bytes('3', 'utf-8'))
     if naredba == 4:  # zatvori vrata
@@ -80,7 +80,7 @@ def cuoNesto(recognizer, audio):
 model_name = "joeddav/xlm-roberta-large-xnli"
 classifier = pipeline("zero-shot-classification", model=model_name)
 
-arduinoSerial = serial.Serial(port='COM4', baudrate=9600, timeout=.1)
+arduinoSerial = serial.Serial(port='COM3', baudrate=9600, timeout=.1)
 
 recognizer = sr.Recognizer()
 mic = sr.Microphone()
