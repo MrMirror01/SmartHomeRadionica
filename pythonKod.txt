@@ -1,0 +1,57 @@
+import time
+
+import serial
+import speech_recognition as sr
+from transformers import pipeline
+import serial
+
+print(sr.Microphone.list_microphone_names())
+
+model_ime = "joeddav/xlm-roberta-large-xnli"
+classifier = pipeline("zero-shot-classification", model=model_ime)
+
+KATEGORIJE = ["Upaliti svijetlo", "Ugasiti svijetlo", "Kolika temperatura"]
+
+arduinoSerial = serial.Serial(port="COM4", baudrate=9600, timeout=.1)
+def izvrsiNaredbu(naredba):
+    if naredba == 0:
+        arduinoSerial.write(bytes('0', 'utf-8'))
+    elif naredba == 1:
+        arduinoSerial.write(bytes('1', 'utf-8'))
+
+def odrediNaredbu(text):
+    result = classifier(text, candidate_labels=KATEGORIJE)
+    label = result['labels'][0]
+    naredba = KATEGORIJE.index(label)
+    print(label)
+    izvrsiNaredbu(naredba)
+
+
+def cuoNesto(recognizer, audio):
+    try:
+        text = recognizer.recognize_google(audio, language="hr-HR")
+        print("Rekao si: " + text)
+
+        if "trpimir" not in text.lower():
+            return
+
+        odrediNaredbu(text)
+
+    except sr.RequestError:
+        print("Server ne radi :(")
+    except sr.UnknownValueError:
+        print("Oprosti, nisam te razumio. Molim te ponovi")
+
+
+recognizer = sr.Recognizer()
+mic = sr.Microphone(device_index=2)
+
+with mic as source:
+    recognizer.adjust_for_ambient_noise(source)
+
+listening = recognizer.listen_in_background(mic, cuoNesto)
+
+print("SADA POCNI GOVORITI")
+
+while True:
+    time.sleep(100)

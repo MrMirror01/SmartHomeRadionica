@@ -1,30 +1,42 @@
-void setup() {
-  // put your setup code here, to run once:
+// Dasduino connect plus (ljubicasti)  // Arduinu MKR1000 (plavi)
+//#include<ESP32Servo.h>               // #include<Servo.h> 
+#define LED_PIN 4                      // #define LED_PIN 4
+#define TEMP_PIN 32                    // #define TEMP_PIN A0
+#define ANALOG_RANGE 4095.0            // #define ANALOG_RANGE 4095.0
 
-  pinMode(4, OUTPUT);
-  pinMode(5, OUTPUT);
+//Servo servo;
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
 
   Serial.begin(9600);
 }
 
 void loop() {
-  int analog = analogRead(A1);
-  float napon = analog * 3.3 / 1023.0;
-  int stupnjevi = (napon - 0.5) * 100.0;
-  
-  if (Serial.available()) {
-    int naredba = Serial.read() - '0';
+  if(Serial.available() > 0) {
+    int num = Serial.read() - '0';
+    
+    switch (num) {
+      case 0:
+        digitalWrite(LED_PIN, LOW);
+        break;
+      case 1:
+        digitalWrite(LED_PIN, HIGH);
+        break;
+      case 2: {
+        int analogValue = analogRead(TEMP_PIN);  // vrijednost od 0-1024 koja odgovara naponu od 0-3.3V
+        float voltage = analogValue * 3.3 / ANALOG_RANGE;  // pretvaramo ocitanu vrijednost u napon
+        //  pretvorba napona u stupnjeve Celzijuse:
+        //  0.5V odgovara temperaturi od 0°C, a svaki volt odgovara rasponu od 100°C
+        int deg = round((voltage - 0.5) * 100.0);
+        Serial.println(deg);
 
-    if (naredba == 0) {
-        digitalWrite(4, HIGH);
-        digitalWrite(5, HIGH);
-    }
-    else if (naredba == 1) {
-      digitalWrite(4, LOW);
-      digitalWrite(5, LOW);
-    }
-    else if (naredba == 2) {
-      Serial.print(stupnjevi);
+        break;
+      }
+      case 3:
+        break;
+      case 4:
+        break;
     }
   }
 }
